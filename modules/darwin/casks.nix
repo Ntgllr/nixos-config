@@ -2,33 +2,56 @@ _:
 
 [
   # Development Tools
-  "claude"
-  "insomnia"
-  "tableplus"
-  "ngrok"
-  "postico"
+  #"homebrew/cask/docker"
   "visual-studio-code"
-  "wireshark-app"
+  "positron"
+  "alacritty"
 
   # Communication Tools
   "discord"
-  "loom"
-  "slack"
-  "telegram"
+  #"notion"
+  #"slack"
+  #"telegram"
   "zoom"
+  "tuta-mail"
 
   # Utility Tools
-  "appcleaner"
-  "syncthing-app"
+  #"syncthing"
+  "qspace-pro"
+  "nextcloud"
+  "rectangle-pro"
+  "logi-options+"
+  "bitwarden"
+  "fuse-t"
+  "veracrypt-fuse-t"
+  
 
   # Entertainment Tools
-  "steam"
   "vlc"
+  "whisky"
+  "calibre"
 
   # Productivity Tools
   "raycast"
-  "asana"
+  "anki"
+  "anytype"
+
+  # LLM Tools
+  "chatgpt"
+
 
   # Browsers
   "google-chrome"
+  "arc"
+  "zen-browser"
+
+  # Office Tools
+  "microsoft-office"
+  "adobe-acrobat-pro"
+  "zotero"
+
+  # Design Tools
+  "affinity-designer"
+  "affinity-photo"
+  "affinity-publisher"
 ]

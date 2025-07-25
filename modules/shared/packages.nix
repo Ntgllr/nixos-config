@@ -6,11 +6,12 @@ let
     rich
     virtualenv
     black
+    uv
   ]);
 
-  myPHP = pkgs.php82.withExtensions ({ enabled, all }: enabled ++ (with all; [
-    xdebug
-  ]));
+  # myPHP = pkgs.php82.withExtensions ({ enabled, all }: enabled ++ (with all; [
+  #   xdebug
+  # ]));
 
   myFonts = import ./fonts.nix { inherit pkgs; };
 in
@@ -19,9 +20,10 @@ with pkgs; [
   act # Run Github actions locally
   age # File encryption tool
   age-plugin-yubikey # YubiKey plugin for age encryption
-  alacritty # GPU-accelerated terminal emulator
+  # alacritty # GPU-accelerated terminal emulator
   aspell # Spell checker
   aspellDicts.en # English dictionary for aspell
+  aspellDicts.de # German dictionary for aspell
 
   # B
   bash-completion # Bash completion scripts
@@ -67,10 +69,12 @@ with pkgs; [
   # L
   lnav # Log file navigator
   libfido2 # FIDO2 library
+  lowfi # Lowfi music player
 
   # M
   myPHP # Custom PHP with extensions
   myPython # Custom Python with packages
+  mangal # Manga reader
 
   # N
   ncurses # Terminal control library with terminfo database
@@ -80,9 +84,12 @@ with pkgs; [
   nodePackages.nodemon # Node.js file watcher
   nodePackages.npm # Node package manager
   (hiPrio nodePackages.prettier) # Code formatter
+  neovim # Text editor
+  nss_latest # Latest Network Security Services library
 
   # O
   openssh # SSH client and server
+  openconnect # VPN client
 
   # P
   pandoc # Document converter
@@ -91,6 +98,11 @@ with pkgs; [
   php82Packages.php-cs-fixer # PHP code style fixer
   phpunit # PHP testing framework
   pngquant # PNG compression tool
+  podman # Container management tool
+  podman-compose # Podman compose tool
+
+  # Q
+  quarto # Scientific and technical publishing system
 
   # R
   ripgrep # Fast text search tool

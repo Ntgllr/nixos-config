@@ -1,8 +1,9 @@
 { config, pkgs, lib, ... }:
 
-let name = "Dustin Lyons";
-    user = "dustin";
-    email = "dustin@dlyons.dev"; in
+let name = "Dennis Grothe";
+    user = "dgrothe2";
+    gitname = "Ntgllr";
+    email = "76962922+Ntgllr@users.noreply.github.com"; in
 {
 
   direnv = {
@@ -48,16 +49,15 @@ let name = "Dustin Lyons";
       # Ripgrep alias
       alias search='rg -p --glob "!node_modules/*" --glob "!vendor/*" "$@"'
 
-      # Emacs is my editor
-      export ALTERNATE_EDITOR=""
-      export EDITOR="emacsclient -t"
-      export VISUAL="emacsclient -c -a emacs"
+      # Vim is my editor
+      #export ALTERNATE_EDITOR="vim"
+      #export EDITOR="emacsclient -t"
+      #export VISUAL="emacsclient -c -a emacs"
+
       e() {
           emacsclient -t "$@"
       }
       
-      # Laravel Artisan
-      alias art='php artisan'
 
       # Use difftastic, syntax-aware diffing
       alias diff=difft
@@ -125,13 +125,36 @@ let name = "Dustin Lyons";
         alias open="xdg-open"
         alias rxp="/home/dustin/.local/share/src/restxp/restxp"
       ''}
+
+      # VPN scripts
+      vpn-up() {
+        local serviceName="OpenConnectVPN"
+        local accountName="dgrothe2"
+        local vpnURL="https://vpn-gate-1.uni-bielefeld.de"
+        local vpnBinary="/Users/$USER/.nix-profile/bin/openconnect"
+
+        # Try to find the password in the Keychain
+        local vpnPassword
+        vpnPassword=$(security find-generic-password -a "$accountName" -s "$serviceName" -w 2>/dev/null)
+        if [ $? -ne 0 ] || [ -z "$vpnPassword" ]; then
+            echo "No VPN password found in the Keychain for '$accountName'. Please enter your password:"
+            read -sr vpnPassword
+            echo
+            security add-generic-password -a "$accountName" -s "$serviceName" -w "$vpnPassword"
+        fi
+
+        # Start openconnect in the background and detach from the shell
+        echo "$vpnPassword" | sudo "$vpnBinary" --protocol=anyconnect --user="$accountName" "$vpnURL" \
+            --background --passwd-on-stdin
+        }
+
     '';
   };
 
   git = {
     enable = true;
     ignores = [ "*.swp" ];
-    userName = name;
+    userName = name; #TEMP: gitname;
     userEmail = email;
     lfs = {
       enable = true;
@@ -269,6 +292,14 @@ let name = "Dustin Lyons";
           x = 24;
           y = 24;
         };
+        decorations = "Full";
+        dynamic_padding = true;
+
+        title = "Terminal";
+        class = {
+        instance = "Alacritty";
+        general = "Alacritty";
+      };
       };
 
       font = {
@@ -359,7 +390,7 @@ let name = "Dustin Lyons";
         # Use XDG data directory
         # https://github.com/tmux-plugins/tmux-resurrect/issues/348
         extraConfig = ''
-          set -g @resurrect-dir '/Users/dustin/.cache/tmux/resurrect'
+          set -g @resurrect-dir '/Users/dgrothe2/.cache/tmux/resurrect'
           set -g @resurrect-capture-pane-contents 'on'
           set -g @resurrect-pane-contents-area 'visible'
         '';
@@ -372,7 +403,7 @@ let name = "Dustin Lyons";
         '';
       }
     ];
-    terminal = "screen-256color";
+    terminal = "screen-256color"; #TEMP: "alacritty";
     prefix = "C-x";
     escapeTime = 10;
     historyLimit = 50000;
