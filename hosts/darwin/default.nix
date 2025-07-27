@@ -12,6 +12,7 @@ let user = "dgrothe2"; in
   ];
   # Setup user, packages, programs
   nix = {
+    enable = false; # if you're using something like Determinate Nix, you don't need or want nix-darwin to manage the nix daemon for you
     package = pkgs.nix;
     settings = {
       trusted-users = [ "@admin" "${user}" ];
@@ -20,7 +21,7 @@ let user = "dgrothe2"; in
     };
 
     gc = {
-      automatic = true; #TODO: Auskommentieren, wenn Fehler
+      # automatic = true; #TODO: Auskommentieren, wenn Fehler
       interval = { Weekday = 0; Hour = 2; Minute = 0; };
       options = "--delete-older-than 30d";
     };

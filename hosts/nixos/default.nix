@@ -154,7 +154,7 @@
   };
 
   services.displayManager.autoLogin.enable = true;
-  services.displayManager.autoLogin.user = "dustin";
+  services.displayManager.autoLogin.user = "dgrothe2";
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;

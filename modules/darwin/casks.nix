@@ -43,7 +43,7 @@ _:
   # Browsers
   "google-chrome"
   "arc"
-  "zen-browser"
+  # "zen-browser"
 
   # Office Tools
   "microsoft-office"

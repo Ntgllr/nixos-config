@@ -72,7 +72,7 @@ with pkgs; [
   lowfi # Lowfi music player
 
   # M
-  myPHP # Custom PHP with extensions
+  # myPHP # Custom PHP with extensions
   myPython # Custom Python with packages
   mangal # Manga reader
 
@@ -121,7 +121,7 @@ with pkgs; [
   # U
   unrar # RAR archive extractor
   unzip # ZIP archive extractor
-  uv # Python package installer
+  # uv # Python package installer
 
   # W
   wget # File downloader

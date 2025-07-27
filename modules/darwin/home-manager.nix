@@ -30,6 +30,7 @@ in
       cleanup = "uninstall";
       upgrade = true;
     };
+    taps = builtins.attrNames config.nix-homebrew.taps; # Pass taps from nix-homebrew to nix-darwin's homebrew module
     casks = pkgs.callPackage ./casks.nix {};
     brews = [
       "bitwarden-cli"
