@@ -4,7 +4,7 @@ _:
   # Development Tools
   #"homebrew/cask/docker"
   "visual-studio-code"
-  "positron"
+  #"positron"
   "alacritty"
 
   # Communication Tools

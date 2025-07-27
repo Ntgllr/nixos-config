@@ -100,6 +100,7 @@ with pkgs; [
   pngquant # PNG compression tool
   podman # Container management tool
   podman-compose # Podman compose tool
+  positron-bin # Data science IDE for Python and R
 
   # Q
   quarto # Scientific and technical publishing system
