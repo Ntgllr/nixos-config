@@ -98,7 +98,8 @@ in
       { path = "/Applications/Microsoft Outlook.app/"; }
       # { path = "${pkgs.alacritty}/Applications/Alacritty.app/"; }
       { path = "/Applications/Alacritty.app/"; }
-      { path = "/Applications/Positron.app/"; }
+      # { path = "/Applications/Positron.app/"; }
+      { path = "${pkgs.positron-bin}/Applications/Positron.app/"; }
       { path = "/Applications/Zotero.app/"; }
       { path = "/Applications/Microsoft Word.app/"; }
       { path = "/Applications/Microsoft Excel.app/"; }
