@@ -41,6 +41,7 @@ let name = "Dennis Grothe";
       export PATH=$HOME/.npm-packages/bin:$HOME/bin:$PATH
       export PATH=$HOME/.composer/vendor/bin:$PATH
       export PATH=$HOME/.local/share/bin:$PATH
+      export PATH=$HOME/.local/share/src/conductly/bin:$PATH
       export PYTHONPATH="$HOME/.local-pip/packages:$PYTHONPATH"
 
       # Remove history data we don't want to see
