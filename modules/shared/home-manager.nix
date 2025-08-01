@@ -141,7 +141,7 @@ let name = "Dennis Grothe";
       # macOS-style open command using Nautilus
       ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
         alias open="xdg-open"
-        alias rxp="/home/dustin/.local/share/src/restxp/restxp"
+        alias rxp="/home/$USER/.local/share/src/restxp/restxp"
       ''}
 
       # VPN scripts
