@@ -96,9 +96,7 @@ in
       { path = "/Applications/QSpace Pro.app/"; }
       { path = "/Applications/Arc.app/"; }
       { path = "/Applications/Microsoft Outlook.app/"; }
-      # { path = "${pkgs.alacritty}/Applications/Alacritty.app/"; }
-      { path = "/Applications/Alacritty.app/"; }
-      # { path = "/Applications/Positron.app/"; }
+      { path = "${pkgs.alacritty}/Applications/Alacritty.app/"; }
       { path = "${pkgs.positron-bin}/Applications/Positron.app/"; }
       { path = "/Applications/Zotero.app/"; }
       { path = "/Applications/Microsoft Word.app/"; }

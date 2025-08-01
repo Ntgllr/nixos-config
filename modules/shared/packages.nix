@@ -20,7 +20,7 @@ with pkgs; [
   act # Run Github actions locally
   age # File encryption tool
   age-plugin-yubikey # YubiKey plugin for age encryption
-  # alacritty # GPU-accelerated terminal emulator
+  alacritty # GPU-accelerated terminal emulator
   aspell # Spell checker
   aspellDicts.en # English dictionary for aspell
   aspellDicts.de # German dictionary for aspell
@@ -59,7 +59,6 @@ with pkgs; [
   imagemagick # Image manipulation toolkit
 
   # J
-  jetbrains.phpstorm # PHP IDE
   jpegoptim # JPEG optimizer
   jq # JSON processor
 

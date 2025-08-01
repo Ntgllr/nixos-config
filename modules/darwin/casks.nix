@@ -5,7 +5,7 @@ _:
   #"homebrew/cask/docker"
   "visual-studio-code"
   #"positron"
-  "alacritty"
+  # "alacritty"
 
   # Communication Tools
   "discord"
