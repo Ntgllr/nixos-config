@@ -13,7 +13,6 @@ _:
   #"slack"
   #"telegram"
   "zoom"
-  "tuta-mail"
 
   # Utility Tools
   #"syncthing"
@@ -41,9 +40,9 @@ _:
 
 
   # Browsers
-  "google-chrome"
   "arc"
-  # "zen-browser"
+  "zen-browser"
+  "vivaldi"
 
   # Office Tools
   "microsoft-office"
