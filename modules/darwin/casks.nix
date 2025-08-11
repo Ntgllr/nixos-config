@@ -6,6 +6,7 @@ _:
   "visual-studio-code"
   #"positron"
   # "alacritty"
+  "quarto"
 
   # Communication Tools
   "discord"
@@ -38,10 +39,8 @@ _:
   # LLM Tools
   "chatgpt"
 
-
   # Browsers
   "arc"
-  "zen-browser"
   "vivaldi"
 
   # Office Tools

@@ -102,7 +102,7 @@ with pkgs; [
   positron-bin # Data science IDE for Python and R
 
   # Q
-  quarto # Scientific and technical publishing system
+  # quarto # Scientific and technical publishing system
 
   # R
   ripgrep # Fast text search tool
