@@ -5,6 +5,7 @@
     flake-utils.url = "github:numtide/flake-utils";
     home-manager.url = "github:nix-community/home-manager";
     agenix.url = "github:ryantm/agenix";
+    #TODO: Remove claude
     claude-desktop = {
       url = "github:k3d3/claude-desktop-linux-flake";
       inputs = { 
@@ -12,6 +13,11 @@
         flake-utils.follows = "flake-utils";
       };
     };
+    nvf = {
+      url = "github:NotAShelf/nvf";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    #TODO: Remove plasma
     plasma-manager = {
       url = "github:nix-community/plasma-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -45,7 +51,7 @@
       flake = false;
     };
   };
-  outputs = { self, darwin, claude-desktop, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, plasma-manager, nixpkgs, flake-utils, disko, agenix, secrets } @inputs:
+  outputs = { self, darwin, claude-desktop, nvf, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, plasma-manager, nixpkgs, flake-utils, disko, agenix, secrets } @inputs:
     let
       user = "dgrothe2";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
@@ -55,7 +61,7 @@
         default = with pkgs; mkShell {
           nativeBuildInputs = with pkgs; [ bashInteractive git age age-plugin-yubikey ];
           shellHook = with pkgs; ''
-            export EDITOR=vim
+            export EDITOR=nvim
           '';
         };
       };

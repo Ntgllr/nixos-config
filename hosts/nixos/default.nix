@@ -1,9 +1,4 @@
 { config, lib, pkgs, modulesPath, user, ... }:
-
-let
-  myEmacs = import ../../modules/shared/emacs.nix { inherit pkgs; };
-in
-
 {
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
@@ -109,11 +104,6 @@ in
 
   # Services configuration
   services = {
-    emacs = {
-      enable = true;
-      package = myEmacs;
-    };
-
 
     xserver = {
      enable = true;

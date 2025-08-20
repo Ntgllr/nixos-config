@@ -1,13 +1,8 @@
-{ config, pkgs, lib, home-manager, ... }:
+{ config, pkgs, lib, home-manager, nvf, ... }:
 
 let
   user = "dgrothe2";
 
-
-  myEmacsLauncher = pkgs.writeScript "emacs-launcher.command" ''
-    #!/bin/sh
-    emacsclient -c -n &
-  '';
   sharedFiles     = import ../shared/files.nix { inherit config pkgs; };
   additionalFiles = import ./files.nix { inherit user config pkgs; };
 in
@@ -25,9 +20,10 @@ in
 
   homebrew = {
     enable = true;
+    global.autoUpdate = true;
     onActivation = {
-      autoUpdate = true;
-      cleanup = "uninstall";
+      autoUpdate = false;
+      cleanup = "zap";
       upgrade = true;
     };
     taps = builtins.attrNames config.nix-homebrew.taps; # Pass taps from nix-homebrew to nix-darwin's homebrew module
@@ -49,6 +45,8 @@ in
       "protobuf"
       "rust"
       "typst"
+      "helix"
+      "zellij"
       ];
 
     # These app IDs are from using the mas CLI app
@@ -71,6 +69,7 @@ in
   # Enable home-manager
   home-manager = {
     useGlobalPkgs = true;
+    sharedModules = [ nvf.homeManagerModules.default ];
     users.${user} = { pkgs, config, lib, ... }:
       {
       home = {
@@ -79,7 +78,6 @@ in
         file = lib.mkMerge [
           sharedFiles
           additionalFiles
-          { "emacs-launcher.command".source = myEmacsLauncher; }
         ];
         stateVersion = "23.11";
       };

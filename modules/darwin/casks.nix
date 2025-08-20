@@ -2,7 +2,6 @@ _:
 
 [
   # Development Tools
-  #"homebrew/cask/docker"
   "visual-studio-code"
   #"positron"
   # "alacritty"
@@ -10,13 +9,9 @@ _:
 
   # Communication Tools
   "discord"
-  #"notion"
-  #"slack"
-  #"telegram"
   "zoom"
 
   # Utility Tools
-  #"syncthing"
   "qspace-pro"
   "nextcloud"
   "rectangle-pro"
@@ -34,7 +29,6 @@ _:
   # Productivity Tools
   "raycast"
   "anki"
-  "anytype"
 
   # LLM Tools
   "chatgpt"

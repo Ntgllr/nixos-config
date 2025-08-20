@@ -6,174 +6,107 @@ let name = "Dennis Grothe";
     email = "76962922+Ntgllr@users.noreply.github.com"; in
 {
 
-  direnv = {
-      enable = true;
-      enableZshIntegration = true;
-      nix-direnv.enable = true;
-    };
-
   zsh = {
     enable = true;
-    autocd = false;
-    cdpath = [ "~/.local/share/src" ];
+    history.size = 10000;
+    history.path = "${config.xdg.dataHome}/zsh/history"; #FIXME
+    shellAliases = {
+      vim = "nvim";
+      ls = "eza --all --long --group --group-directories-first --icons --header --time-style long-iso"; 
+    };
+    initExtra = ''
+      ZSH_DISABLE_COMPFIX=true
+      export EDITOR=nvim
+
+      bindkey -v
+
+      # disable sort when completing `git checkout`
+      zstyle ':completion:*:git-checkout:*' sort false
+
+      # set descriptions format to enable group support
+      # NOTE: don't use escape sequences here, fzf-tab will ignore them
+      zstyle ':completion:*:descriptions' format '[%d]'
+
+      # set list-colors to enable filename colorizing
+      zstyle ':completion:*' list-colors ''${(s.:.)LS_COLORS}
+
+      # force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
+      zstyle ':completion:*' menu no
+
+      # preview directory's content with eza when completing cd
+      zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'eza -1 --color=always $realpath'
+      zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+      zstyle ':fzf-tab:complete:ls:*' fzf-preview 'cat $realpath'
+
+      # switch group using `<` and `>`
+      zstyle ':fzf-tab:*' switch-group '<' '>'
+
+      # Keybindings
+      bindkey -e
+      bindkey '^p' history-search-backward
+      bindkey '^n' history-search-forward
+      bindkey '^[w' kill-region
+
+      zle_highlight+=(paste:none)
+
+      setopt appendhistory
+      setopt sharehistory
+      setopt hist_ignore_space
+      setopt hist_ignore_all_dups
+      setopt hist_save_no_dups
+      setopt hist_ignore_dups
+      setopt hist_find_no_dups
+    '';
+    # oh-my-zsh = {
+    #   enable = true;
+    #   plugins = [
+    #     "git"
+    #     "sudo"
+    #     "docker"
+    #     "golang"
+    #     "kubectl"
+    #     "kubectx"
+    #     "rust"
+    #     "command-not-found"
+    #     "pass"
+    #     "helm"
+    #   ];
+    # };
     plugins = [
+      #{
+      # will source zsh-autosuggestions.plugin.zsh
+      #name = "zsh-autosuggestions";
+      #src = pkgs.zsh-autosuggestions;
+      #file = "share/zsh-autosuggestions/zsh-autosuggestions.zsh";
+      #}
       {
-          name = "powerlevel10k";
-          src = pkgs.zsh-powerlevel10k;
-          file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+        name = "zsh-completions";
+        src = pkgs.zsh-completions;
+        file = "share/zsh-completions/zsh-completions.zsh";
       }
       {
-          name = "powerlevel10k-config";
-          src = lib.cleanSource ./config;
-          file = "p10k.zsh";
+        name = "zsh-syntax-highlighting";
+        src = pkgs.zsh-syntax-highlighting;
+        file = "share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh";
+      }
+      {
+        name = "fzf-tab";
+        src = pkgs.zsh-fzf-tab;
+        file = "share/fzf-tab/fzf-tab.plugin.zsh";
       }
     ];
-    initContent = lib.mkBefore ''
-      if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
-        . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-        . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-      fi
+  };
 
-      # Save and restore last directory
-      LAST_DIR_FILE="$HOME/.zsh_last_dir"
-      
-      # Save directory on every cd
-      function chpwd() {
-        echo "$PWD" > "$LAST_DIR_FILE"
-      }
-      
-      # Restore last directory on startup
-      if [[ -f "$LAST_DIR_FILE" ]] && [[ -r "$LAST_DIR_FILE" ]]; then
-        last_dir="$(cat "$LAST_DIR_FILE")"
-        if [[ -d "$last_dir" ]]; then
-          cd "$last_dir"
-        fi
-      fi
-
-      export TERM=xterm-256color
-
-      # Define PATH variables
-      export PATH=$HOME/.pnpm-packages/bin:$HOME/.pnpm-packages:$PATH
-      export PATH=$HOME/.npm-packages/bin:$HOME/bin:$PATH
-      export PATH=$HOME/.composer/vendor/bin:$PATH
-      export PATH=$HOME/.local/share/bin:$PATH
-      export PATH=$HOME/.local/bin:$PATH
-      export PATH=$HOME/.local/share/src/conductly/bin:$PATH
-      export PATH=$HOME/.local/share/src/conductly/utils:$PATH
-      export PYTHONPATH="$HOME/.local-pip/packages:$PYTHONPATH"
-
-      # Remove history data we don't want to see
-      export HISTIGNORE="pwd:ls:cd"
-
-      # Ripgrep alias
-      alias search='rg -p --glob "!node_modules/*" --glob "!vendor/*" "$@"'
-
-      # Vim is my editor
-      #export ALTERNATE_EDITOR="vim"
-      #export EDITOR="emacsclient -t"
-      #export VISUAL="emacsclient -c -a emacs"
-
-      e() {
-          emacsclient -t "$@"
-      }
-      
-
-      # Use difftastic, syntax-aware diffing
-      alias diff=difft
-
-      # Always color ls and group directories
-      alias ls='ls --color=auto'
-      
-      # SSH wrapper functions with terminal color changes
-      ssh-production() {
-          # Change terminal background to dark red
-          printf '\033]11;#3d1515\007'
-          command ssh production "$@"
-          # Reset terminal background
-          printf '\033]11;#1f2528\007'
-      }
-      
-      ssh-staging() {
-          # Change terminal background to dark orange
-          printf '\033]11;#3d2915\007'
-          command ssh staging "$@"
-          # Reset terminal background
-          printf '\033]11;#1f2528\007'
-      }
-      
-      ssh-droplet() {
-          # Change terminal background to dark green
-          printf '\033]11;#153d15\007'
-          command ssh droplet "$@"
-          # Reset terminal background
-          printf '\033]11;#1f2528\007'
-      }
-      
-      # Override ssh command to detect known hosts
-      ssh() {
-          case "$1" in
-              production|209.97.152.81)
-                  # Change terminal background to dark red
-                  printf '\033]11;#3d1515\007'
-                  command ssh "$@"
-                  # Reset terminal background
-                  printf '\033]11;#1f2528\007'
-                  ;;
-              staging|174.138.88.191)
-                  # Change terminal background to dark orange
-                  printf '\033]11;#3d2915\007'
-                  command ssh "$@"
-                  # Reset terminal background
-                  printf '\033]11;#1f2528\007'
-                  ;;
-              droplet|165.227.66.119)
-                  # Change terminal background to dark green
-                  printf '\033]11;#153d15\007'
-                  command ssh "$@"
-                  # Reset terminal background
-                  printf '\033]11;#1f2528\007'
-                  ;;
-              *)
-                  command ssh "$@"
-                  ;;
-          esac
-      }
-      
-      # macOS-style open command using Nautilus
-      ${lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
-        alias open="xdg-open"
-        alias rxp="/home/$USER/.local/share/src/restxp/restxp"
-      ''}
-
-      # VPN scripts
-      vpn-up() {
-        local serviceName="OpenConnectVPN"
-        local accountName="dgrothe2"
-        local vpnURL="https://vpn-gate-1.uni-bielefeld.de"
-        local vpnBinary="/Users/$USER/.nix-profile/bin/openconnect"
-
-        # Try to find the password in the Keychain
-        local vpnPassword
-        vpnPassword=$(security find-generic-password -a "$accountName" -s "$serviceName" -w 2>/dev/null)
-        if [ $? -ne 0 ] || [ -z "$vpnPassword" ]; then
-            echo "No VPN password found in the Keychain for '$accountName'. Please enter your password:"
-            read -sr vpnPassword
-            echo
-            security add-generic-password -a "$accountName" -s "$serviceName" -w "$vpnPassword"
-        fi
-
-        # Start openconnect in the background and detach from the shell
-        echo "$vpnPassword" | sudo "$vpnBinary" --protocol=anyconnect --user="$accountName" "$vpnURL" \
-            --background --passwd-on-stdin
-        }
-
-    '';
+  oh-my-posh = {
+    enable = true;
+    enableZshIntegration = true;
+    settings = builtins.fromTOML (builtins.unsafeDiscardStringContext (builtins.readFile ./config/omp.toml));
   };
 
   git = {
     enable = true;
     ignores = [ "*.swp" ];
-    userName = name; #TEMP: gitname;
+    userName = gitname;
     userEmail = email;
     lfs = {
       enable = true;
@@ -190,175 +123,74 @@ let name = "Dennis Grothe";
     };
   };
 
-  vim = {
+  fzf = {
     enable = true;
-    plugins = with pkgs.vimPlugins; [ vim-airline vim-airline-themes vim-tmux-navigator ];
-    settings = { ignorecase = true; };
-    extraConfig = ''
-      "" General
-      set number
-      set history=1000
-      set nocompatible
-      set modelines=0
-      set encoding=utf-8
-      set scrolloff=3
-      set showmode
-      set showcmd
-      set hidden
-      set wildmenu
-      set wildmode=list:longest
-      set cursorline
-      set ttyfast
-      set nowrap
-      set ruler
-      set backspace=indent,eol,start
-      set laststatus=2
-      " Don't use clipboard=unnamedplus, use macOS pbcopy/pbpaste instead
-
-      " Dir stuff
-      set nobackup
-      set nowritebackup
-      set noswapfile
-      set backupdir=~/.config/vim/backups
-      set directory=~/.config/vim/swap
-
-      " Relative line numbers for easy movement
-      set relativenumber
-      set rnu
-
-      "" Whitespace rules
-      set tabstop=8
-      set shiftwidth=2
-      set softtabstop=2
-      set expandtab
-
-      "" Searching
-      set incsearch
-      set gdefault
-
-      "" Statusbar
-      set nocompatible " Disable vi-compatibility
-      set laststatus=2 " Always show the statusline
-      let g:airline_theme='bubblegum'
-      let g:airline_powerline_fonts = 1
-
-      "" Local keys and such
-      let mapleader=","
-      let maplocalleader=" "
-
-      "" Change cursor on mode
-      :autocmd InsertEnter * set cul
-      :autocmd InsertLeave * set nocul
-
-      "" File-type highlighting and configuration
-      syntax on
-      filetype on
-      filetype plugin on
-      filetype indent on
-
-      "" macOS clipboard integration
-      vnoremap <Leader>. :w !pbcopy<CR><CR>
-      nnoremap <Leader>, :r !pbpaste<CR>
-
-      "" Move cursor by display lines when wrapping
-      nnoremap j gj
-      nnoremap k gk
-
-      "" Map leader-q to quit out of window
-      nnoremap <leader>q :q<cr>
-
-      "" Move around split
-      nnoremap <C-h> <C-w>h
-      nnoremap <C-j> <C-w>j
-      nnoremap <C-k> <C-w>k
-      nnoremap <C-l> <C-w>l
-
-      "" Easier to yank entire line
-      nnoremap Y y$
-
-      "" Move buffers
-      nnoremap <tab> :bnext<cr>
-      nnoremap <S-tab> :bprev<cr>
-
-      "" Like a boss, sudo AFTER opening the file to write
-      cmap w!! w !sudo tee % >/dev/null
-
-      let g:startify_lists = [
-        \ { 'type': 'dir',       'header': ['   Current Directory '. getcwd()] },
-        \ { 'type': 'sessions',  'header': ['   Sessions']       },
-        \ { 'type': 'bookmarks', 'header': ['   Bookmarks']      }
-        \ ]
-
-      let g:startify_bookmarks = [
-        \ '~/.local/share/src',
-        \ ]
-
-      let g:airline_theme='bubblegum'
-      let g:airline_powerline_fonts = 1
-      '';
-     };
+    enableZshIntegration = true;
+    tmux.enableShellIntegration = true;
+  };
 
   alacritty = {
-    enable = true;
-    settings = {
-      cursor = {
-        style = "Block";
+      enable = true;
+      theme = "tokyo_night";
+      settings = {
+        cursor = {
+          style = "Block";
+        };
+
+        window = {
+          padding = {
+            x = 4;
+            y = 8;
+          };
+          decorations = "Full";
+          opacity = 1;
+          startup_mode = "Windowed";
+          title = "Alacritty";
+          dynamic_title = true;
+          decorations_theme_variant = "None";
+        };
+
+        general = {
+          live_config_reload = true;
+        };
+
+        font = {
+          normal = {
+            family = "JetBrainsMono Nerd Font";
+            style = "Regular";
+          };
+          size = lib.mkMerge [
+            (lib.mkIf pkgs.stdenv.hostPlatform.isLinux 10)
+            (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin 14)
+          ];
+        };
+
+        colors = {
+          primary = {
+            background = "0x1f2528";
+            foreground = "0xc0c5ce";
+          };
+
+          normal = {
+            black = "0x1f2528";
+            red = "0xec5f67";
+            green = "0x99c794";
+            yellow = "0xfac863";
+            blue = "0x6699cc";
+            magenta = "0xc594c5";
+            cyan = "0x5fb3b3";
+            white = "0xc0c5ce";
+        };
+
+        
       };
 
-      window = {
-        opacity = 1.0;
-        padding = {
-          x = 24;
-          y = 24;
-        };
-        decorations = "Full";
-        dynamic_padding = true;
-
-        title = "Terminal";
-        class = {
-        instance = "Alacritty";
-        general = "Alacritty";
-      };
+      mouse = {
+        hide_when_typing = true;
       };
 
-      font = {
-        normal = {
-          family = "MesloLGS NF";
-          style = "Regular";
-        };
-        size = lib.mkMerge [
-          (lib.mkIf pkgs.stdenv.hostPlatform.isLinux 10)
-          (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin 14)
-        ];
-      };
-
-      colors = {
-        primary = {
-          background = "0x1f2528";
-          foreground = "0xc0c5ce";
-        };
-
-        normal = {
-          black = "0x1f2528";
-          red = "0xec5f67";
-          green = "0x99c794";
-          yellow = "0xfac863";
-          blue = "0x6699cc";
-          magenta = "0xc594c5";
-          cyan = "0x5fb3b3";
-          white = "0xc0c5ce";
-        };
-
-        bright = {
-          black = "0x65737e";
-          red = "0xec5f67";
-          green = "0x99c794";
-          yellow = "0xfac863";
-          blue = "0x6699cc";
-          magenta = "0xc594c5";
-          cyan = "0x5fb3b3";
-          white = "0xd8dee9";
-        };
+      env = {
+        TERM = "xterm-256color";
       };
     };
   };
@@ -373,108 +205,293 @@ let name = "Dennis Grothe";
         "/Users/${user}/.ssh/config_external"
       )
     ];
-    #matchBlocks = {
-    #  "github.com" = {
-    #    identitiesOnly = true;
-    #    identityFile = [
-    #      (lib.mkIf pkgs.stdenv.hostPlatform.isLinux
-    #        "/home/${user}/.ssh/id_github"
-    #      )
-    #      (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin
-    #        "/Users/${user}/.ssh/id_github"
-    #      )
-    #    ];
-    #  };
-    #};
   };
 
-  tmux = {
-    enable = true;
-    shell = "${pkgs.zsh}/bin/zsh";
-    sensibleOnTop = false;
-    plugins = with pkgs.tmuxPlugins; [
-      vim-tmux-navigator
-      sensible  # Re-enabled with workaround below
-      yank
-      prefix-highlight
-      {
-        plugin = power-theme;
-        extraConfig = ''
-           set -g @tmux_power_theme 'gold'
-        '';
-      }
-      {
-        plugin = resurrect; # Used by tmux-continuum
+  nvf = {
+    enable = false;
+    settings.vim = {
+      viAlias = true;
+      vimAlias = true;
+      debugMode = {
+        enable = false;
+        level = 16;
+        logFile = "/tmp/nvim.log";
+      };
 
-        # Use XDG data directory
-        # https://github.com/tmux-plugins/tmux-resurrect/issues/348
-        extraConfig = ''
-          set -g @resurrect-dir '/Users/dgrothe2/.cache/tmux/resurrect'
-          set -g @resurrect-capture-pane-contents 'on'
-          set -g @resurrect-pane-contents-area 'visible'
-        '';
-      }
-      {
-        plugin = continuum;
-        extraConfig = ''
-          set -g @continuum-restore 'on'
-          set -g @continuum-save-interval '5' # minutes
-        '';
-      }
-    ];
-    terminal = "screen-256color"; #TEMP: "alacritty";
-    prefix = "C-x";
-    escapeTime = 10;
-    historyLimit = 50000;
-    extraConfig = ''
-      # Remove Vim mode delays
-      set -g focus-events on
+      spellcheck = {
+        enable = true;
+        programmingWordlist.enable = true;
+      };
 
-      # Enable full mouse support
-      set -g mouse on
+      lsp = {
+        # This must be enabled for the language modules to hook into
+        # the LSP API.
+        enable = true;
 
-      # -----------------------------------------------------------------------------
-      # Key bindings
-      # -----------------------------------------------------------------------------
+        formatOnSave = true;
+        lspkind.enable = false;
+        lightbulb.enable = true;
+        lspsaga.enable = false;
+        trouble.enable = true;
+        lspSignature.enable = !true; # conflicts with blink in maximal
+        otter-nvim.enable = true;
+        nvim-docs-view.enable = true;
+      };
 
-      # Unbind default keys
-      unbind C-b
-      unbind '"'
-      unbind %
+      debugger = {
+        nvim-dap = {
+          enable = true;
+          ui.enable = true;
+        };
+      };
 
-      # Split panes, vertical or horizontal
-      bind-key x split-window -v
-      bind-key v split-window -h
+      # This section does not include a comprehensive list of available language modules.
+      # To list all available language module options, please visit the nvf manual.
+      languages = {
+        enableFormat = true;
+        enableTreesitter = true;
+        enableExtraDiagnostics = true;
 
-      # Move around panes with vim-like bindings (h,j,k,l)
-      bind-key -n M-k select-pane -U
-      bind-key -n M-h select-pane -L
-      bind-key -n M-j select-pane -D
-      bind-key -n M-l select-pane -R
+        # Languages that will be supported in default and maximal configurations.
+        nix.enable = true;
+        markdown.enable = true;
 
-      # Smart pane switching with awareness of Vim splits.
-      # This is copy paste from https://github.com/christoomey/vim-tmux-navigator
-      is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
-        | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'"
-      bind-key -n 'C-h' if-shell "$is_vim" 'send-keys C-h'  'select-pane -L'
-      bind-key -n 'C-j' if-shell "$is_vim" 'send-keys C-j'  'select-pane -D'
-      bind-key -n 'C-k' if-shell "$is_vim" 'send-keys C-k'  'select-pane -U'
-      bind-key -n 'C-l' if-shell "$is_vim" 'send-keys C-l'  'select-pane -R'
-      tmux_version='$(tmux -V | sed -En "s/^tmux ([0-9]+(.[0-9]+)?).*/\1/p")'
-      if-shell -b '[ "$(echo "$tmux_version < 3.0" | bc)" = 1 ]' \
-        "bind-key -n 'C-\\' if-shell \"$is_vim\" 'send-keys C-\\'  'select-pane -l'"
-      if-shell -b '[ "$(echo "$tmux_version >= 3.0" | bc)" = 1 ]' \
-        "bind-key -n 'C-\\' if-shell \"$is_vim\" 'send-keys C-\\\\'  'select-pane -l'"
+        # Languages that are enabled in the maximal configuration.
+        bash.enable = true;
+        clang.enable = true;
+        css.enable = true;
+        html.enable = true;
+        sql.enable = true;
+        java.enable = true;
+        kotlin.enable = true;
+        ts.enable = true;
+        go.enable = true;
+        lua.enable = true;
+        zig.enable = true;
+        python.enable = true;
+        typst.enable = true;
+        rust = {
+          enable = true;
+          crates.enable = true;
+        };
 
-      bind-key -T copy-mode-vi 'C-h' select-pane -L
-      bind-key -T copy-mode-vi 'C-j' select-pane -D
-      bind-key -T copy-mode-vi 'C-k' select-pane -U
-      bind-key -T copy-mode-vi 'C-l' select-pane -R
-      bind-key -T copy-mode-vi 'C-\' select-pane -l
-      
-      # Darwin-specific fix for tmux 3.5a with sensible plugin
-      # This MUST be at the very end of the config
-      set -g default-command "$SHELL"
-      '';
+        # Language modules that are not as common.
+        assembly.enable = false;
+        astro.enable = false;
+        nu.enable = false;
+        csharp.enable = false;
+        julia.enable = false;
+        vala.enable = false;
+        scala.enable = false;
+        r.enable = false;
+        gleam.enable = false;
+        dart.enable = false;
+        ocaml.enable = false;
+        elixir.enable = false;
+        haskell.enable = false;
+        ruby.enable = false;
+        fsharp.enable = false;
+
+        tailwind.enable = false;
+        svelte.enable = false;
+
+        # Nim LSP is broken on Darwin and therefore
+        # should be disabled by default. Users may still enable
+        # `vim.languages.vim` to enable it, this does not restrict
+        # that.
+        # See: <https://github.com/PMunch/nimlsp/issues/178#issue-2128106096>
+        nim.enable = false;
+      };
+
+      visuals = {
+        nvim-scrollbar.enable = true;
+        nvim-web-devicons.enable = true;
+        nvim-cursorline.enable = true;
+        cinnamon-nvim.enable = true;
+        fidget-nvim.enable = true;
+
+        highlight-undo.enable = true;
+        indent-blankline.enable = true;
+
+        # Fun
+        cellular-automaton.enable = false;
+      };
+
+      statusline = {
+        lualine = {
+          enable = true;
+          theme = "catppuccin";
+        };
+      };
+
+      theme = {
+        enable = true;
+        name = "catppuccin";
+        style = "mocha";
+        transparent = false;
+      };
+
+      autopairs.nvim-autopairs.enable = true;
+
+      # nvf provides various autocomplete options. The tried and tested nvim-cmp
+      # is enabled in default package, because it does not trigger a build. We
+      # enable blink-cmp in maximal because it needs to build its rust fuzzy
+      # matcher library.
+      autocomplete = {
+        nvim-cmp.enable = !true;
+        blink-cmp.enable = true;
+      };
+
+      snippets.luasnip.enable = true;
+
+      filetree = {
+        neo-tree = {
+          enable = true;
+        };
+      };
+
+      tabline = {
+        nvimBufferline.enable = true;
+      };
+
+      treesitter.context.enable = true;
+
+      binds = {
+        whichKey.enable = true;
+        cheatsheet.enable = true;
+      };
+
+      telescope.enable = true;
+
+      git = {
+        enable = true;
+        gitsigns.enable = true;
+        gitsigns.codeActions.enable = false; # throws an annoying debug message
+        neogit.enable = true;
+      };
+
+      minimap = {
+        minimap-vim.enable = false;
+        codewindow.enable = true; # lighter, faster, and uses lua for configuration
+      };
+
+      dashboard = {
+        dashboard-nvim.enable = false;
+        alpha.enable = true;
+      };
+
+      notify = {
+        nvim-notify.enable = true;
+      };
+
+      projects = {
+        project-nvim.enable = true;
+      };
+
+      utility = {
+        ccc.enable = false;
+        vim-wakatime.enable = false;
+        diffview-nvim.enable = true;
+        yanky-nvim.enable = false;
+        icon-picker.enable = true;
+        surround.enable = true;
+        leetcode-nvim.enable = true;
+        multicursors.enable = true;
+        smart-splits.enable = true;
+        undotree.enable = true;
+        nvim-biscuits.enable = true;
+
+        motion = {
+          hop.enable = true;
+          leap.enable = true;
+          precognition.enable = true;
+        };
+        images = {
+          image-nvim.enable = false;
+          img-clip.enable = true;
+        };
+      };
+
+      notes = {
+        obsidian.enable = false; # FIXME: neovim fails to build if obsidian is enabled
+        neorg.enable = false;
+        orgmode.enable = false;
+        mind-nvim.enable = true;
+        todo-comments.enable = true;
+      };
+
+      terminal = {
+        toggleterm = {
+          enable = true;
+          lazygit.enable = true;
+        };
+      };
+
+      ui = {
+        borders.enable = true;
+        noice.enable = true;
+        colorizer.enable = true;
+        modes-nvim.enable = false; # the theme looks terrible with catppuccin
+        illuminate.enable = true;
+        breadcrumbs = {
+          enable = true;
+          navbuddy.enable = true;
+        };
+        smartcolumn = {
+          enable = true;
+          setupOpts.custom_colorcolumn = {
+            # this is a freeform module, it's `buftype = int;` for configuring column position
+            nix = "110";
+            ruby = "120";
+            java = "130";
+            go = ["90" "130"];
+          };
+        };
+        fastaction.enable = true;
+      };
+
+      assistant = {
+        chatgpt.enable = false;
+        copilot = {
+          enable = false;
+          cmp.enable = true;
+        };
+        codecompanion-nvim.enable = false;
+        avante-nvim.enable = true;
+      };
+
+      session = {
+        nvim-session-manager.enable = false;
+      };
+
+      gestures = {
+        gesture-nvim.enable = false;
+      };
+
+      comments = {
+        comment-nvim.enable = true;
+      };
+
+      presence = {
+        neocord.enable = false;
+      };
     };
+  };
+
+  zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+    options = ["--cmd cd"];
+  };
+
+  zathura = {
+    enable = true;
+    options = {
+      database = "sqlite";
+    };
+  };
+
+  tmux = import ./tmux.nix { inherit pkgs; };
+  
+
 }
