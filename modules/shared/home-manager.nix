@@ -138,6 +138,7 @@ let name = "Dennis Grothe";
         };
 
         window = {
+          option_as_alt = "OnlyLeft";
           padding = {
             x = 4;
             y = 8;

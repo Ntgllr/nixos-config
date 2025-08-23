@@ -6,6 +6,8 @@ _:
   #"positron"
   # "alacritty"
   "quarto"
+  "ghostty"
+  "wezterm"
 
   # Communication Tools
   "discord"
@@ -19,6 +21,7 @@ _:
   "bitwarden"
   "fuse-t"
   "veracrypt-fuse-t"
+  # "ukelele"
   
 
   # Entertainment Tools

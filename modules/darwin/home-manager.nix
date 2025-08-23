@@ -47,6 +47,9 @@ in
       "typst"
       "helix"
       "zellij"
+      "jj"
+      "nushell"
+      "carapace"
       ];
 
     # These app IDs are from using the mas CLI app
