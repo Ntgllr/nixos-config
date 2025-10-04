@@ -40,6 +40,7 @@ in
       "libjpeg"
       "librsvg"
       "webp"
+      "imagemagick"
       # "openconnect"
       "dotnet"
       "protobuf"
@@ -50,6 +51,18 @@ in
       "jj"
       "nushell"
       "carapace"
+      "fancy-cat"
+      "ncspot"
+      "spotify_player"
+
+      # LSPs & Formatter
+      "ruff"
+      "marksman"
+      "markdown-oxide"
+      "taplo"
+      "prettier"
+      "yaml-language-server"
+      "ansible-language-server"
       ];
 
     # These app IDs are from using the mas CLI app
@@ -97,7 +110,7 @@ in
       { path = "/Applications/QSpace Pro.app/"; }
       { path = "/Applications/Arc.app/"; }
       { path = "/Applications/Microsoft Outlook.app/"; }
-      { path = "${pkgs.alacritty}/Applications/Alacritty.app/"; }
+      { path = "/Applications/Ghostty.app/"; }
       { path = "${pkgs.positron-bin}/Applications/Positron.app/"; }
       { path = "/Applications/Zotero.app/"; }
       { path = "/Applications/Microsoft Word.app/"; }

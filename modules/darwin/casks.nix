@@ -21,7 +21,8 @@ _:
   "bitwarden"
   "fuse-t"
   "veracrypt-fuse-t"
-  # "ukelele"
+  "ukelele"
+  "karabiner-elements"
   
 
   # Entertainment Tools
@@ -44,6 +45,7 @@ _:
   "microsoft-office"
   "adobe-acrobat-pro"
   "zotero"
+  "languagetool-desktop"
 
   # Design Tools
   "affinity-designer"

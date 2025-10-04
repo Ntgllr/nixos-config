@@ -9,4 +9,5 @@ with pkgs; [
   meslo-lgs-nf
   noto-fonts
   noto-fonts-emoji
+  libertinus
 ]
