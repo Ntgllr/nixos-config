@@ -52,13 +52,15 @@ in
       "nushell"
       "carapace"
       "fancy-cat"
-      "ncspot"
       "spotify_player"
+      "codex"
+      "poppler"
 
       # LSPs & Formatter
       "ruff"
       "marksman"
       "markdown-oxide"
+      "ltex-ls-plus"
       "taplo"
       "prettier"
       "yaml-language-server"

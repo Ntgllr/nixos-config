@@ -12,6 +12,7 @@ _:
   # Communication Tools
   "discord"
   "zoom"
+  "mattermost"
 
   # Utility Tools
   "qspace-pro"
